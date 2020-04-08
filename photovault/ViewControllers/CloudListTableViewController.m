@@ -46,8 +46,8 @@
 - (void)metadataQueryFinish:(NSNotification *)noti {
     NSLog(@"数据获取成功！");
     [self.dataArr removeAllObjects];
-    NSArray *items = self.query.results;//查询结果集
-    for (NSMetadataItem *item in items) {
+    [self.query enumerateResultsUsingBlock:^(id  _Nonnull result, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSMetadataItem *item = (NSMetadataItem *)result;
         NSString *fileName = [item valueForAttribute:NSMetadataItemFSNameKey];
         if ([fileName isEqualToString:@"4.png"]) {
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
@@ -63,7 +63,7 @@
         NSDate *dateChange = [item valueForAttribute:NSMetadataItemFSCreationDateKey];
         NSString *dateChangeStr = [self dateStringWithDate:dateChange];
         [self.dataArr addObject:@{@"name": fileName, @"date": dateString, @"dateChange": dateChangeStr}];
-    }
+    }];
     [self.tableView reloadData];
 }
 

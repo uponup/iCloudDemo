@@ -13,8 +13,21 @@
 
 @implementation CloudKit
 
++ (BOOL)cloudEnable {
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSURL *url = [manager URLForUbiquityContainerIdentifier:kContainerIdentifier];
+    return url != nil;
+}
+
 + (void)uploadWithKey:(NSString *)imgKey withCompletion:(completionBlock)block {
+    if ([self cloudEnable]) {
+        NSLog(@"cloud 可用");
+    }else {
+        NSLog(@"cloud 不可用");
+    }
+    
     NSURL *url = [self cloudUrlWithKey:imgKey];
+    NSLog(@"%@", url);
     PVDocument *cloudDoc = [[PVDocument alloc] initWithFileURL:url];
     cloudDoc.data = [self dataWithImgKey:imgKey];
     [cloudDoc saveToURL:url forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
@@ -95,7 +108,15 @@
     NSFileManager *manager = [NSFileManager defaultManager];
     NSURL *url = [manager URLForUbiquityContainerIdentifier:kContainerIdentifier];
     //取得Documents目录
-    url = [url URLByAppendingPathComponent:@"Documents"];
+    url = [url URLByAppendingPathComponent:@"Documents/images"];
+    
+    if ([[NSFileManager defaultManager] isUbiquitousItemAtURL:url]) {
+        
+    }else {
+        NSLog(@"不存在");
+        [[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
     //取得最终地址
     url = [url URLByAppendingPathComponent:key];
     return url;

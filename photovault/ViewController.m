@@ -155,7 +155,7 @@
                 });
             });
         }else {
-            NSLog(@"===》%@ 上传失败!", self->_downloadName);
+            NSLog(@"===》%@ 下载失败!", self->_downloadName);
         }
         self->_downloadName = @"";
     }];

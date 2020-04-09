@@ -30,8 +30,14 @@
     NSLog(@"%@", url);
     PVDocument *cloudDoc = [[PVDocument alloc] initWithFileURL:url];
     cloudDoc.data = [self dataWithImgKey:imgKey];
+    
+    NSDate *date1 = [NSDate date];
     [cloudDoc saveToURL:url forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
         if (success) {
+            
+            NSDate *date2 = [NSDate date];
+            NSLog(@"upload---->: %.f", [date2 timeIntervalSinceDate:date1]);
+
             block(YES, cloudDoc.data);
         }else {
             block(NO, nil);
@@ -44,10 +50,13 @@
     NSURL *localUrl = [self localUrlWithKey:imgKey];
     PVDocument *cloudDoc = [[PVDocument alloc] initWithFileURL:url];
     PVDocument *localDoc = [[PVDocument alloc] initWithFileURL:localUrl];
+    NSDate *date1 = [NSDate date];
     [cloudDoc openWithCompletionHandler:^(BOOL success) {
         if (success) {
             localDoc.data = [cloudDoc.data copy];
             if (success) {
+                NSDate *date2 = [NSDate date];
+                NSLog(@"download---->: %.f", [date2 timeIntervalSinceDate:date1]);
                 block(YES, localDoc.data);
             }else {
                 block(NO, nil);
